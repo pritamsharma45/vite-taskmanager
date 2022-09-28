@@ -2,12 +2,22 @@
   "name": "vue2-vite",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
+    "serve": "vite preview",
     "build": "vite build",
-    "serve": "vite preview"
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
+    "deploy": "npm run build && npm run gas && clasp push",
+    "dev": "vite",
+    "gas": "chmod +x ./gas.sh && ./gas.sh",
+    "preview": "vite preview --port 4173"
   },
   "dependencies": {
-    "vue": "^2.6.12"
+    "@mdi/font": "^7.0.96",
+    "buefy": "^0.9.22",
+    "moment": "^2.29.1",
+    "vue": "^2.6.12",
+    "vue-flatpickr-component": "^8.1.5",
+    "vue-json-excel": "^0.3.0",
+    "vue-router": "^3.0.2"
   },
   "devDependencies": {
     "vite": "^2.0.5",
