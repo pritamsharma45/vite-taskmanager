@@ -1,7 +1,7 @@
 <template>
-  <div class="box mx-1 my-1">
-    <h6>{{ schema.title }}</h6>
-    <b-field grouped group-multiline>
+  <div>
+    <h5 class="title is-5 undelined">{{ schema.title }}</h5>
+    <b-form-group grouped group-multiline>
       <div
         class="control"
         v-for="(filter, index) in schema.filters"
@@ -9,28 +9,18 @@
       >
         <section>
           <div v-if="filter.type === 'text'">
-            <b-field :label="filter.label" label-position="on-border">
-              <b-input
-                v-model="filter.value"
-                value=""
-                size="is-small"
-              ></b-input>
-            </b-field>
-          </div>
-
-          <!-- <div v-if="filter.type === 'select'">
-            <b-field :label="filter.label" label-position="on-border">
-              <b-input
+            <b-form-group :label="filter.label" label-position="on-border">
+              <b-form-input
                 v-model="filter.value"
                 value="Kevin Garvey"
-                size="is-small"
-              ></b-input>
-            </b-field>
-          </div> -->
+                size="sm"
+              ></b-form-input>
+            </b-form-group>
+          </div>
 
           <div v-if="filter.type === 'select'">
-            <b-field :label="filter.label" label-position="on-border">
-              <b-select v-model="filter.value" size="is-small" expanded>
+            <b-form-group :label="filter.label" label-position="on-border">
+              <b-form-select v-model="filter.value" size="sm" expanded>
                 <option
                   v-for="(option, index) in dropdowns[filter.optionSource]"
                   :value="typeof option === 'object' ? option['id'] : option"
@@ -48,12 +38,16 @@
                       : option
                   }}
                 </option>
-              </b-select>
-            </b-field>
+              </b-form-select>
+            </b-form-group>
           </div>
           <div v-if="filter.type === 'select_2'">
-            <b-field :label="filter.label" label-position="on-border" expanded>
-              <b-select v-model="filter.value" size="is-small" expanded>
+            <b-form-group
+              :label="filter.label"
+              label-position="on-border"
+              expanded
+            >
+              <b-form-select v-model="filter.value" size="sm" expanded>
                 <option
                   v-for="(option, index) in dropdowns[filter.optionSource]"
                   :value="
@@ -69,16 +63,15 @@
                       : option
                   }}
                 </option>
-              </b-select>
-            </b-field>
+              </b-form-select>
+            </b-form-group>
           </div>
           <div v-if="filter.type === 'instant_select'">
-            <b-field :label="filter.label" label-position="on-border" expanded>
-              <b-select
+            <b-form-group :label="filter.label">
+              <b-form-select
                 v-model="filter.value"
                 :required="filter.required"
                 :placeholder="filter.placeholder"
-                size="is-small"
                 expanded
               >
                 <option
@@ -88,129 +81,50 @@
                 >
                   {{ option }}
                 </option>
-              </b-select>
-            </b-field>
-          </div>
-          <div v-if="filter.type === 'dependentSelect'">
-            <b-field :label="filter.label" label-position="on-border">
-              <b-input
-                v-model="filter.value"
-                value=""
-                size="is-small"
-              ></b-input>
-            </b-field>
-          </div>
-          <div v-if="filter.type === 'select_multilevel'">
-            <b-field :label="filter.label" label-position="on-border">
-              <b-select
-                size="is-small"
-                :required="filter.required"
-                :placeholder="filter.placeholder"
-                v-model="filter.value"
-                @input="
-                  () => {
-                    if (filter.filterOptions) {
-                      filterDD({
-                        filterTable: filter.filterOptions.tblToFilter,
-                        filterBy: filter.filterOptions.filterOn,
-                        filterValue: filter.value,
-                      });
-                    }
-                  }
-                "
-                expanded
-              >
-                <option
-                  v-for="(option, index) in dropdowns[filter.optionSource]"
-                  :value="
-                    filter.selectOptions
-                      ? option[filter.selectOptions.value]
-                      : option
-                  "
-                  :key="index"
-                >
-                  {{
-                    filter.selectOptions
-                      ? option[filter.selectOptions.name]
-                      : option
-                  }}
-                </option>
-              </b-select>
-            </b-field>
+              </b-form-select>
+            </b-form-group>
           </div>
 
           <div v-if="filter.type === 'date_from_to'">
-            <fieldset class="box mt-0 mb-0 pb-1 px-1">
-              <legend
-                class="label is-small on-border"
-                label-position="on-border"
-              >
+            <fieldset class="box mt-1 mb-1">
+              <legend class="label is-small">
                 {{ filter.label }}
               </legend>
-              <b-field grouped>
-                <b-field
-                  label="From"
-                  label-position="on-border"
-                  class="mt-0 mb-0"
-                  expanded
-                >
+              <b-form-group grouped>
+                <b-form-group label="From" label-position="on-border" expanded>
                   <b-datepicker
                     v-model="filter.from"
                     locale="en-US"
                     placeholder="Click to select..."
                     icon="calendar-today"
-                    size="is-small"
+                    size="sm"
                     trap-focus
                   >
                   </b-datepicker>
-                </b-field>
-                <b-field label="To" label-position="on-border" expanded>
+                </b-form-group>
+                <b-form-group label="To" label-position="on-border" expanded>
                   <b-datepicker
                     v-model="filter.to"
                     locale="en-US"
-                    class="mt-0 mb-0"
                     placeholder="Click to select..."
                     icon="calendar-today"
-                    size="is-small"
+                    size="sm"
                     trap-focus
                   >
                   </b-datepicker>
-                </b-field>
-              </b-field>
+                </b-form-group>
+              </b-form-group>
             </fieldset>
-          </div>
-          <div v-if="filter.type === 'date'">
-            <b-field :label="filter.label" label-position="on-border" expanded>
-              <b-datepicker
-                v-model="filter.value"
-                locale="en-US"
-                placeholder="Click to select..."
-                icon="calendar-today"
-                size="is-small"
-                trap-focus
-              >
-              </b-datepicker>
-            </b-field>
           </div>
         </section>
         <!-- If Object -->
       </div>
-    </b-field>
+    </b-form-group>
     <div>
-      <b-button
-        type="is-success"
-        size="is-small"
-        icon-left="filter"
-        @click="filtersSubmitted"
-      >
+      <b-button variant="success" size="sm" @click="filtersSubmitted">
         Filter
       </b-button>
-      <b-button
-        type="is-warning"
-        size="is-small"
-        icon-left="filter-off"
-        @click="filtersCleared"
-      >
+      <b-button variant="warning" size="sm" @click="filtersCleared">
         Clear
       </b-button>
     </div>
@@ -256,7 +170,12 @@ export default {
     },
   },
   mounted() {
-    this.populateDropdown();
+    // this.fltrSchema = this.filterSchema;
+    // console.log("Filter Schema", this.fltrSchema);
+    // this.resetFilterSchema = JSON.parse(JSON.stringify(this.fltrSchema));
+    // console.log("Reset Filter Schema ", this.resetFilterSchema);
+    this.dropdowns = store.state.tables;
+    this.dropdowns["tbl_Jobs"] = store.state.jobs;
   },
   filters: {
     capitalize(value) {
@@ -290,31 +209,6 @@ export default {
       });
 
       this.$emit("filtersCleared", true);
-    },
-    populateDropdown() {
-      let dd = {};
-      dd["tbl_Jobs"] = store.state.jobs;
-      dd["tbl_Programs"] = store.state.programs;
-      dd["tbl_Projects"] = store.state.projects;
-      // console.log("Drop down fetched", dd);
-      dd["tbl_Customers"] = store.state.tables["tbl_Customers"];
-      dd["tbl_Suppliers"] = store.state.tables["tbl_Suppliers"];
-      dd["tbl_Works"] = store.state.tables["tbl_Works"];
-      dd["tbl_Users"] = store.state.tables["tbl_Users"];
-      dd["tbl_Items"] = store.state.tables["tbl_Items"];
-      dd["tbl_Vehicles"] = store.state.tables["tbl_Vehicles"];
-
-      this.dropdowns = JSON.parse(JSON.stringify(dd));
-      this.dropdownLoading = false;
-      console.log("Smartfilter:-", this.dropdowns);
-    },
-    filterDD(filterObject) {
-      console.log("Filter Object", filterObject);
-      let filteredList = Object.values(store.state.jobs);
-      filteredList = filteredList.filter((r) => {
-        return r[filterObject.filterBy] === filterObject.filterValue;
-      });
-      this.dropdowns[filterObject.filterTable] = filteredList;
     },
   },
 };

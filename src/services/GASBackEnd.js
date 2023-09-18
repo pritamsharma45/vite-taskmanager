@@ -1,156 +1,94 @@
 "use strict";
 
 class GASBackEnd {
-    constructor() {}
-    sayHello() {
-        return new Promise(function(resolve, reject) {
-            google.script.run
-                .withSuccessHandler(function(res) {
-                    resolve(res);
-                })
-                .withFailureHandler(function() {
-                    reject();
-                })
-                .sayHello();
-        });
-    }
+  constructor() {}
+  sayHello() {
+    return new Promise(function(resolve, reject) {
+      google.script.run
+        .withSuccessHandler(function(res) {
+          resolve(res);
+        })
+        .withFailureHandler(function() {
+          reject();
+        })
+        .sayHello();
+    });
+  }
 
-    addEntry(formDataObject, formName) {
-        return new Promise(function(resolve, reject) {
-            google.script.run
-                .withSuccessHandler(function(res) {
-                    resolve(res);
-                })
-                .withFailureHandler(function() {
-                    reject();
-                })
-                .addEntry(formDataObject, formName);
-        });
-    }
-    createPRF(formDataObject) {
-        return new Promise(function(resolve, reject) {
-            google.script.run
-                .withSuccessHandler(function(res) {
-                    resolve(res);
-                })
-                .withFailureHandler(function() {
-                    reject();
-                })
-                .createPRF(formDataObject);
-        });
-    }
-    GetTableDataSource(sheetName) {
-        return new Promise(function(resolve, reject) {
-            google.script.run
-                .withSuccessHandler(function(res) {
-                    resolve(res);
-                })
-                .withFailureHandler(function() {
-                    reject();
-                })
-                .GetTableDataSource(sheetName);
-        });
-    }
-    getFormNumber(formName) {
-        return new Promise(function(resolve, reject) {
-            google.script.run
-                .withSuccessHandler(function(res) {
-                    resolve(res);
-                })
-                .withFailureHandler(function() {
-                    reject();
-                })
-                .getFormNumber(formName);
-        });
-    }
-    GetPRFDetail() {
-        return new Promise(function(resolve, reject) {
-            google.script.run
-                .withSuccessHandler(function(res) {
-                    resolve(res);
-                })
-                .withFailureHandler(function() {
-                    reject();
-                })
-                .GetPRFDetail();
-        });
-    }
-    GetTables() {
-        return new Promise(function(resolve, reject) {
-            google.script.run
-                .withSuccessHandler(function(res) {
-                    resolve(res);
-                })
-                .withFailureHandler(function() {
-                    reject();
-                })
-                .GetTables();
-        });
-    }
-    GetTablesInPRFEntries(id) {
-        return new Promise(function(resolve, reject) {
-            google.script.run
-                .withSuccessHandler(function(res) {
-                    resolve(res);
-                })
-                .withFailureHandler(function() {
-                    reject();
-                })
-                .GetTablesInPRFEntries(id);
-        });
-    }
-    GetPrefilledFormData(form_number, sheetName, stage) {
-        return new Promise(function(resolve, reject) {
-            google.script.run
-                .withSuccessHandler(function(res) {
-                    resolve(res);
-                })
-                .withFailureHandler(function() {
-                    reject();
-                })
-                .GetPrefilledFormData(form_number, sheetName, stage);
-        });
-    }
+  addEntry(formDataObject, formName) {
+    return new Promise(function(resolve, reject) {
+      google.script.run
+        .withSuccessHandler(function(res) {
+          resolve(res);
+        })
+        .withFailureHandler(function() {
+          reject();
+        })
+        .addEntry(formDataObject, formName);
+    });
+  }
 
-    GetTablesInSRFEntries(id) {
-        return new Promise(function(resolve, reject) {
-            google.script.run
-                .withSuccessHandler(function(res) {
-                    resolve(res);
-                })
-                .withFailureHandler(function() {
-                    reject();
-                })
-                .GetTablesInSRFEntries(id);
-        });
-    }
+  createEntity(formDataObject, tableName) {
+    return new Promise(function(resolve, reject) {
+      google.script.run
+        .withSuccessHandler(function(res) {
+          resolve(res);
+        })
+        .withFailureHandler(function() {
+          reject();
+        })
+        .createEntity(formDataObject, tableName);
+    });
+  }
 
-    sendMailPRF(form_id, mailIds, listName) {
-        return new Promise(function(resolve, reject) {
-            google.script.run
-                .withSuccessHandler(function(res) {
-                    resolve(res);
-                })
-                .withFailureHandler(function() {
-                    reject();
-                })
-                .sendMailPRF(form_id, mailIds, listName);
-        });
-    }
-    sendMail2(obj) {
-        return new Promise(function(resolve, reject) {
-            google.script.run
-                .withSuccessHandler(function(res) {
-                    resolve(res);
-                })
-                .withFailureHandler(function() {
-                    reject();
-                })
-                .sendMail2(obj);
-        });
-    }
-
-
+  getRelatedTablesByModel(model) {
+    return new Promise(function(resolve, reject) {
+      google.script.run
+        .withSuccessHandler(function(res) {
+          resolve(res);
+        })
+        .withFailureHandler(function() {
+          reject();
+        })
+        .getRelatedTablesByModel(model);
+    });
+  }
+  GetPopulatedTable(table_name) {
+    return new Promise(function(resolve, reject) {
+      google.script.run
+        .withSuccessHandler(function(res) {
+          resolve(res);
+        })
+        .withFailureHandler(function() {
+          reject();
+        })
+        .GetPopulatedTable(table_name);
+    });
+  }
+  GetFilteredTasks(clientId) {
+    return new Promise(function(resolve, reject) {
+      google.script.run
+        .withSuccessHandler(function(res) {
+          resolve(res);
+        })
+        .withFailureHandler(function() {
+          reject();
+        })
+        .GetFilteredTasks(clientId);
+    });
+  }
+  GetTable(table_name) {
+    return new Promise(function(resolve, reject) {
+      google.script.run
+        .withSuccessHandler(function(res) {
+          resolve(res);
+        })
+        .withFailureHandler(function() {
+          reject();
+        })
+        .GetTable(table_name);
+    });
+  }
 }
 
 export default GASBackEnd;

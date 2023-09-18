@@ -1,0 +1,210 @@
+html {
+  font-size: calc(18% + 0.45vw + 0.45vh);
+}
+
+.table-responsive {
+  width: 100%;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.container {
+  width: 100%;
+
+  margin-right: auto;
+  margin-left: auto;
+}
+.jumbotron {
+  padding: 0.5rem 0, 5rem;
+  margin-bottom: 1rem;
+  background-color: #e9ecef;
+  border-radius: 0.3rem;
+}
+.breadcrumb {
+  background-color: #f7de04;
+}
+.entire-red {
+  color: red;
+}
+.gradient-aqua {
+  background: linear-gradient(to right, #7fffd4 0%, #00ffff 100%);
+  font-size: 13px;
+}
+.material-icons.green600 {
+  color: #308a4b;
+}
+.material-icons.red90 {
+  color: #fc0882;
+}
+.material-icons.md-18 {
+  font-size: 18px;
+}
+.material-icons.md-36 {
+  font-size: 36px;
+}
+
+.gradient-lavender {
+  background: linear-gradient(to bottom right, #fae5e5 0%, #fae5e5 100%);
+  font-size: 13px;
+}
+
+.gradient-lightpink {
+  background: linear-gradient(to bottom right, #f9e2a7 0%, #f9e2a7 100%);
+  font-size: 13px;
+}
+
+.gradient-cyan {
+  background: linear-gradient(to right, #97ffff 0%, #7fffd4 100%);
+  font-size: 13px;
+}
+.gradient-lightpurple {
+  background: linear-gradient(to right, #afeeee 0%, #e0ffff 100%);
+  font-size: 13px;
+}
+
+.gradient-dark-blue {
+  background: linear-gradient(to bottom, #0033cc 0%, #99ccff 100%);
+}
+
+.gradient-endless-river {
+  background: linear-gradient(to right, #dfffa5 0%, #e8f1d4 100%);
+}
+.gradient-muddy-river {
+  background: linear-gradient(to bottom, #999966 0%, #ffff00 100%);
+}
+.datepicker {
+  font-size: 13px;
+}
+hr.darkGreenBlue {
+  border: 1px solid #00cdd4;
+}
+
+hr.darkSpringGreen {
+  border: 1px solid #015b25;
+}
+hr.blue {
+  border: 0.6px solid blue;
+}
+hr.bluishGreen {
+  border: 1px solid #00b33c;
+}
+
+hr.scarlet {
+  border: 1px solid #5a0502;
+}
+.gradient-swiftOrange {
+  background: linear-gradient(to right, #ff6666 0%, #ffcc99 100%);
+}
+
+.gradient-LightGreenBlue {
+  background: linear-gradient(to right, #00cdd4 0%, #80fbff 100%);
+}
+
+.gradient-MintGreen {
+  background: linear-gradient(to right, #9ae79a 0%, #cef87e 100%);
+}
+.gradient-PaleBlue {
+  background: linear-gradient(to bottom, #c6ddff 0%, #caecf6 100%);
+}
+.gradient-OrangePink {
+  background: linear-gradient(to bottom, #ffbefa 0%, #fdceff 100%);
+}
+.gradient-lightalgalgreen {
+  background: linear-gradient(to right, #90ee90 0%, #e0eee0 100%);
+}
+
+.bg-ocean-blue {
+  background: #b8ffdc;
+}
+
+.bg-ocean-fawn {
+  background: #f8ebfc;
+}
+.bg-solid-yellow {
+  background: #ffff00;
+}
+.card-body {
+  overflow: auto;
+}
+
+.tableMaxWidth {
+  max-width: 300px;
+}
+
+.img-fluid {
+  max-width: 20%;
+}
+
+.text-responsive-grey {
+  font-size: calc(20% + 0.5vw + 1vh);
+  color: #4d4d4d;
+}
+.text-responsive-white {
+  font-size: calc(30% + 0.7vw + 1vh);
+  color: #faf8f8;
+}
+.text-responsive-scarlet {
+  font-size: calc(20% + 0.5vw + 1vh);
+  color: #5a0502;
+}
+.text-responsive-midnightBlue {
+  font-size: calc(20% + 0.5vw + 1vh);
+  color: #012d57;
+}
+.text-responsive-midnightBlue-big {
+  font-size: calc(20% + 0.7vw + 1vh);
+  color: #012d57;
+}
+.text-responsive-scarlet-big {
+  font-size: calc(20% + 0.7vw + 1vh);
+  color: #5a0502;
+}
+
+.text-darkSpringGreen {
+  font-size: calc(20% + 0.5vw + 1vh);
+  color: #015b25;
+}
+.text-responsive-blue {
+  font-size: calc(20% + 0.5vw + 1vh);
+  color: #2517f0;
+}
+.text-responsive-algalblue {
+  font-size: calc(20% + 0.5vw + 1vh);
+  color: #0033cc;
+}
+.text-amber{
+  color: #eca303;
+}
+.text-responsive-yellow {
+  font-size: calc(40% + 0.7vw + 1vh);
+  color: #d0ff00;
+}
+
+.text-responsive-red {
+  font-size: calc(20% + 0.3vw + 1vh);
+  color: #ff3300;
+}
+.text-responsive-green {
+  font-size: calc(20% + 0.3vw + 1vh);
+  color: #046923;
+}
+.text-responsive-lightgreen {
+  font-size: calc(30% + 0.7vw + 1vh);
+  color: #15c249;
+}
+.text-responsive-darkBlue {
+  font-size: calc(30% + 0.7vw + 1vh);
+  color: #02645f;
+}
+.text-responsive-white {
+  font-size: calc(20% + 0.3vw + 1vh);
+  color: #e0eef5;
+}
+.text-white {
+  color: #e0eef5;
+}
+
+// .table-condensed {
+//   font-size: calc(20% + 0.3vw + 1vh);
+// }

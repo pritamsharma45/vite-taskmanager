@@ -1,69 +1,168 @@
 var _ = LodashGS.load();
+var moment = Moment.moment;
 
 function doGet() {
-  return HtmlService.createTemplateFromFile("index")
+  var page = "index";
+  // ---- Enable trail Features
+  // if (CheckAppStatus().app_mode === "Trial Expired") {
+  //   page = "expired";
+  // }
+
+  return HtmlService.createTemplateFromFile(page)
     .evaluate()
     .setFaviconUrl("https://heartstchr.github.io/img/borl.png")
-    .setTitle("ETCS App")
+    .setTitle("Task Manager")
     .addMetaTag("viewport", "width=device-width, initial-scale=1");
 }
 
+// function onOpen(e) {
+//   var uiMenu = SpreadsheetApp.getUi().createMenu("Task Manager");
+
+//   uiMenu
+//     .addSubMenu(
+//       SpreadsheetApp.getUi()
+//         .createMenu("Advanced Settings")
+//         .addItem("Clear old data", "clearAll")
+//         .addItem("Upload your customer's data", "showSideForUploadingCustomers")
+//       // .addItem("Test with dummy data", "myThirdFunction")
+//     )
+//     .addToUi();
+
+//   if (_trialStarted() == false) {
+//     uiMenu
+//       .addItem("Click to start your trial or first use.", "resetForFirstUse")
+//       .addSeparator()
+//       .addToUi();
+//   }
+//   if (_checkIfLicensed() == false) {
+//     uiMenu
+//       .addItem("Enter License Key", "showLicensePrompt")
+//       .addSeparator()
+//       .addToUi();
+//   }
+//   if (_underTrial() === "UNDER_TRIAL") {
+//     uiMenu
+//       .addItem("This is under trial", "showLicensePrompt")
+//       .addSeparator()
+//       .addToUi();
+//   }
+//   if (_underTrial() === "EXPIRED") {
+//     uiMenu
+//       .addItem("Trial expired", "showLicensePrompt")
+//       .addSeparator()
+//       .addToUi();
+//   }
+// }
+// function showLicensePrompt() {
+//   var ui = SpreadsheetApp.getUi(); // Same variations.
+
+//   var result = ui.prompt("Enter license key", ui.ButtonSet.OK_CANCEL);
+//   var button = result.getSelectedButton();
+//   var text = result.getResponseText();
+//   if (button == ui.Button.OK) {
+//     if (matchLicenseKey(text) == true) {
+//       ui.alert("Thank you for purchasing the product.!");
+//     } else {
+//       ui.alert("You have entered the wrong key.!");
+//     }
+//   }
+// }
 function includes(filename) {
   return HtmlService.createHtmlOutputFromFile(filename).getContent();
 }
 
-function getLoggedInUser() {
-  return Session.getActiveUser().getEmail();
-}
+//  Upload fields
+function saveFile2(blobs, payload) {
+  const FOLDER_ID = "138xQI8p87KZk0vDe2qz_ExBiVJe1Dzfp";
+  // const FOLDER_ID = "1-1NjFcvFik87CiXnkv-M3_sV3ncxAYeE"; //Gurneet ID
 
-function saveInDrive(f) {
-  const blob = Utilities.newBlob(f, "image/jpeg", "some-name");
-  const file = DriveApp.getFolderById("root").createFile(blob);
-  return file.getUrl();
-}
-function saveFile(fileObjects) {
-  fileObjects.forEach((o) => {
-    var blob = Utilities.newBlob(
-      Utilities.base64Decode(o.data),
-      o.mimeType,
-      o.fileName
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var SSID = ss.getId();
+  var fileInDrive = DriveApp.getFolderById(SSID);
+  var parent_id = fileInDrive.getParents().next().getId();
+  var par_fdr = DriveApp.getFolderById(parent_id); // replace the ID
+  var fdr_name = "Client Attachments";
+  const files = [];
+  try {
+    var newFdr = par_fdr.getFoldersByName(fdr_name).next();
+  } catch (e) {
+    var newFdr = par_fdr.createFolder(fdr_name);
+  }
+
+  blobs.forEach((blob, i) => {
+    const fileBlob = Utilities.newBlob(
+      Utilities.base64Decode(blob.data),
+      blob.mimeType,
+      blob.fileName
     );
-    DriveApp.createFile(blob).getId();
+
+    files.push({
+      url: newFdr.createFile(fileBlob).getUrl(),
+      name: blob.fileName || "File" + (i + 1),
+    });
   });
-
-  // for (const [k, v] of Object.entries(fileObjects)) {
-  //   let arr = [];
-  //   v.forEach((o) => {
-  //     var blob = Utilities.newBlob(
-  //       Utilities.base64Decode(o.data),
-  //       o.mimeType,
-  //       o.fileName
-  //     );
-  //     DriveApp.createFile(blob).getId();
-  //     arr.push(DriveApp.createFile(blob).getId());
-  //   });
-  //   o[k] = arr;
-  // }
-
   // var blob = Utilities.newBlob(
   //   Utilities.base64Decode(obj.data),
   //   obj.mimeType,
   //   obj.fileName
   // );
-  // return o;
+  // var folder = DriveApp.getFolderById(FOLDER_ID);
+  // const newFile = newFdr.createFile(blob).getUrl();
+
+  const updateObj = {
+    attachments: JSON.stringify(files),
+  };
+  const { id, tblName } = payload;
+
+  BulkUpdateByIds([id], tblName, updateObj);
+  return updateObj;
+  // return newFdr.createFile(blob).getUrl();
+
+  // return DriveApp.createFile(blob).getUrl();
 }
 
-function saveFile2(obj) {
-  // const FOLDER_ID = "138xQI8p87KZk0vDe2qz_ExBiVJe1Dzfp";
-  const FOLDER_ID = "1-1NjFcvFik87CiXnkv-M3_sV3ncxAYeE"; //Gurneet ID
-  var blob = Utilities.newBlob(
-    Utilities.base64Decode(obj.data),
-    obj.mimeType,
-    obj.fileName
-  );
-  var folder = DriveApp.getFolderById(FOLDER_ID);
-  return folder.createFile(blob).getUrl();
-  // return DriveApp.createFile(blob).getUrl();
+/**
+ * Method to get item in a table by it's id.
+ * @param {Integer} id: id in a table.
+ * @param {String} tableName: Name of Named Range or Table Name.
+ */
+
+function getRelatedTasks(clientId) {
+  return GetItemsWhere("tbl_task", [{ client_id: clientId }]);
+}
+
+function getClientInfo(clientId) {
+  // return GetItemsWhere("tbl_client_info", [{ client_id: clientId }])[0];
+  return GetItemById(clientId, "tbl_client_info");
+}
+function getClientInfo(clientId) {
+  var tbl = getTableByName("tbl_client_info", "id");
+  var queryItems = tbl.select([{ client_id: clientId }]);
+  if (queryItems.all() == null) {
+    return null;
+  } else {
+    var result = {};
+    result.header = tbl.header;
+    result.items = queryItems.all();
+    return result;
+  }
+}
+// function getClientNote(clientId) {
+//   // return GetItemsWhere("tbl_client_info", [{ client_id: clientId }])[0];
+//   return GetItemById(clientId, "tbl_client_notes");
+// }
+
+function createEntity(formDataObject, tableName) {
+  if (formDataObject.hasOwnProperty("id")) {
+    updateRecord(tableName, formDataObject);
+    return true;
+  } else {
+    var table = getTableByName(tableName);
+
+    var newItem = table.add(formDataObject);
+    table.commit();
+    return newItem;
+  }
 }
 
 function getStringifiedTables(tableNames) {
@@ -75,395 +174,318 @@ function getStringifiedTables(tableNames) {
     o[name] = vals;
   });
 
-  return o;
+  return JSON.stringify(o);
 }
 
-function GetTableDataSource(sheetName) {
+function GetTable(tblName) {
+  return _getTableByNameWithidColumn(tblName, "normal");
+}
+function GetItemsWhere(id, sheetName) {
   Tamotsu.initialize();
-  var Agent;
-  var tableDataSource = {};
-  Agent = Tamotsu.Table.define({ sheetName: sheetName, idColumn: "id" });
-  var dataTable = Agent.all();
-  var fields = Object.keys(Agent.first());
-  fields.splice(0, 1);
+  var Agent = Tamotsu.Table.define({ sheetName: sheetName });
+  return Agent.where({ client_id: id });
+}
 
-  cols = _.map(fields, function (el) {
-    var obj = {};
-    obj.field = el;
-    obj.label = _.startCase(el);
-    return obj;
+function GetTables(tblNames) {
+  // const tblNames = ['tbl_task_type','tbl_client_type'];
+  const tables = {};
+  tblNames.forEach((tblName) => {
+    tables[tblName] = _getTableByNameWithidColumn(tblName, "normal");
   });
-  tableDataSource.columns = cols;
-  tableDataSource.items = dataTable.reverse();
-  return tableDataSource;
+  // Logger.log(tables);
+  return tables;
 }
-
-function LogData() {
-  Tamotsu.initialize();
-  var Agent;
-  Agent = Tamotsu.Table.define({ sheetName: "PRF_Active" });
-  Logger.log(Agent.first());
-}
-
-// function createPRF(formDataObject) {
-//   var Agent;
-//   Tamotsu.initialize();
-//   Agent = Tamotsu.Table.define({ sheetName: "PRF_Active", idColumn: "id" });
-//   var srfEntry = new Agent(formDataObject);
-//   Agent.create(srfEntry);
-//   return true;
-// }
-
-function addEntry(formDataObject, formName) {
-  var now = JSON.stringify(new Date());
-  var Agent;
-  Tamotsu.initialize();
-  if (formDataObject.ID) {
-    formDataObject.ID = Number(formDataObject.ID);
+function updateRecord(tableName, updateObject) {
+  var table = getTableByName(tableName, "id");
+  if (updateObject.hasOwnProperty("_showDetails")) {
+    delete updateObject["_showDetails"];
   }
-  try {
-    Agent = Tamotsu.Table.define({ sheetName: formName, idColumn: "id" });
-    formDataObject.created_date = now;
-    var srfEntry = new Agent(formDataObject);
-    // Agent.createOrUpdate(srfEntry);
-    return Agent.createOrUpdate(srfEntry);
-  } catch (error) {
-    console.log(error);
-    return false;
-  }
-}
-
-function commitFilesToDB(sheetName, id, formDataObject) {
-  var Agent;
-  Tamotsu.initialize();
-  Agent = Tamotsu.Table.define({ sheetName: sheetName, idColumn: "id" });
-  var row = Agent.find(id);
-  return row.updateAttributes(formDataObject);
-}
-
-function deleteEntryByID(id, tableName) {
-  var Agent;
-  Tamotsu.initialize();
-
-  try {
-    Agent = Tamotsu.Table.define({ sheetName: tableName, idColumn: "id" });
-    Agent.find(id).destroy();
-    return true;
-  } catch (error) {
-    console.log(error);
-    return false;
-  }
-}
-
-function GetRecordById(id, tableName) {
-  Tamotsu.initialize();
-  var Agent;
-  Agent = Tamotsu.Table.define({ sheetName: tableName, idColumn: "id" });
-  return Agent.find(id);
-}
-function UpdateAttributes(sheetName, id, updateObject) {
-  var Agent;
-  Tamotsu.initialize();
-  Agent = Tamotsu.Table.define({ sheetName: sheetName, idColumn: "id" });
-  var row = Agent.find(id);
-  return row.updateAttributes(updateObject);
-}
-// function getPRFRecords(sheetName) {
-//   Tamotsu.initialize();
-//   try {
-//     var tbl = Tamotsu.Table.define({
-//       sheetName: sheetName,
-//       idColumn: "id",
-//     }).all();
-//     return tbl;
-//   } catch (error) {
-//     return false;
-//   }
-// }
-
-function getFormNumber(formName) {
-  var Agent;
-  Tamotsu.initialize();
-  Agent = Tamotsu.Table.define({ sheetName: formName, idColumn: "id" });
-  var formNumber = Agent.max("Form_Number");
-  Logger.log(formNumber); //=> 300
-  return formNumber;
-}
-
-function LogData() {
-  Tamotsu.initialize();
-  var Agent1;
-  Agent1 = Tamotsu.Table.define({ sheetName: "PRF_Active", idColumn: "id" });
-  Logger.log(Agent1.first());
-}
-
-function SendWeeklyTimeLogs() {
-  // const FOLDER_ID = "1dY0AWO9KcZzfh76RS8A9ZRVy-7flse_2";
-  const FOLDER_ID = "1-6NOVJOTgy9rVgVvL_wsjiKPVWsi54z2"; // Gurneet ID
-  // const TO_RECEPIENTS = "notifications.borl@gmail.com";
-  const TO_RECEPIENTS = "priya@etcsinc.com";
-  const TITLE = "ETCS Web App";
-
-  let jsonArray = NamedRangeToJSON("tbl_TimeLog");
-  var arr = [];
-  jsonArray = jsonArray.filter((row) => {
-    return (
-      dateDiff(new Date().getTime(), new Date(row.created_date).getTime()) < 10
-    );
-  });
-  // Logger.log(jsonArray);
-  const userTable = indexedTable("tbl_Users", "id", "model");
-  // Logger.log(userTable);
-  jsonArray.forEach((row) => {
-    const { job_entries, date, user } = JSON.parse(row.model);
-    job_entries.forEach((entry) => {
-      entry.date = date;
-      entry.user = JSON.parse(userTable[Number(user)])["name"];
-      arr.push(entry);
-    });
-  });
-  // Logger.log(arr[0]);
-  // Logger.log(Object.keys(arr[0]));
-  var header = [];
-  for (const [k, v] of Object.entries(arr[0])) {
-    header.push(humanize(k));
-  }
-
-  arr = JSONToArray(arr);
-  arr.unshift(header);
-  //  Create New File
-  var dt = new Date().toLocaleString("en-US");
-  var folder = DriveApp.getFolderById(FOLDER_ID);
-  var ss = SpreadsheetApp.create("DailyLogsOverWeek - " + dt);
-  var sht = ss.getSheetByName("Sheet1");
-  var rng = sht.getRange(2, 2, arr.length, arr[0].length);
-  rng.setValues(arr);
-
-  //  Move File
-  DriveApp.getFileById(ss.getId()).moveTo(folder);
-  //  Send Mail
-  var attachment = DriveApp.getFileById(ss.getId());
-
-  GmailApp.sendEmail(
-    TO_RECEPIENTS,
-    "DailyLogsOverWeek - " + dt,
-    "drive.google.com/open?id=" + ss.getId(),
-    { attachments: [attachment], name: TITLE }
-  );
-}
-function sendMail_(model, files = {}, mailOptions = {}, subject, message) {
-  if (!_.isEmpty(mailOptions)) {
-    message = mailOptions.line1 + message;
-  }
-  if (_.isEmpty(files)) {
-    // Logger.log("No Files");
-  } else {
-    message += "<p><b>" + "Files" + " : " + "</b></p>";
-
-    for (k in files) {
-      message += "<p>" + " " + humanize(k) + "</p>";
-      const filesArray = files[k];
-      filesArray.forEach((file, index) => {
-        message +=
-          "<p><b>" +
-          "   " +
-          (index + 1) +
-          " : " +
-          "</b>" +
-          "<a href=" +
-          file +
-          ">" +
-          file +
-          "</a></p>";
-      });
-    }
-  }
-
-  if (!_.isEmpty(mailOptions)) {
-    let text = `
-    
-    Thanks & Regards,\n
-    ${mailOptions.requestee}`;
-    message += text;
-    // message += mailOptions.line2;
-  }
-  Logger.log(message);
-  MailApp.sendEmail({
-    to: mailOptions.to.join(","),
-    cc: mailOptions.cc.join(","),
-    subject: subject,
-    htmlBody: message,
-  });
-}
-
-function sendMail(tableName, model, id, mailOptions, subject, message) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sht = ss.getSheetByName(tableName);
-  // var model = JSON.parse(sht.getRange('B5').getValue());
-  var files = GetRecordById(id, tableName).files;
-  files = files != "" ? JSON.parse(files) : {};
-  // var files = JSON.parse(sht.getRange('D5').getValue());
-  Logger.log(model);
-  sendMail_(model, files, mailOptions, subject, message);
-
+  table.updateById(updateObject);
+  table.commit();
   return true;
 }
 
-function sendHtmlMail(htmlBody) {
-  MailApp.sendEmail({
-    to: "notifications.borl@gmail.com",
-    cc: "pritamiitian@gmail.com",
-    subject: "HTML Body Mail",
-    htmlBody: htmlBody,
+function deleteItem(tableName, id) {
+  var table = getTableByName(tableName, "id");
+  var item = table.getItemById(id);
+  table.deleteOne(item);
+  table.commit();
+  return true;
+}
+
+function getItemByIDDeep(tableName, id) {
+  var table = getTableByName(tableName, "id");
+  var item = table.getItemById(id);
+  var flds = item.table.header;
+  var relatedItems = {};
+
+  flds.forEach((fld) => {
+    if (fld.endsWith("_id")) {
+      var foreingKey = item.fields[fld]["value"];
+      var relatedTblName = "tbl_" + fld.replace("_id", "");
+      var relatedtable = getTableByName(relatedTblName, "id");
+      var relatedItem = relatedtable.getItemById(foreingKey);
+
+      const { fields } = relatedItem;
+      //  Logger.log(relatedItem);
+      var leanItem = {};
+      leanItem.item = {};
+      leanItem.header = {};
+      for (const [key, value] of Object.entries(fields)) {
+        // console.log(key, value);
+
+        leanItem.item[key] = value["value"];
+      }
+      const { header } = relatedItem.table;
+      leanItem.header = header;
+      relatedItems[fld] = leanItem;
+    }
+  });
+  return relatedItems;
+}
+
+function PopulateRelatedFields() {
+  var tbl = getTableByName("tbl_task");
+
+  Logger.log(tbl.items);
+  var keys = Object.keys(tbl.items);
+
+  var arr = keys.map((key) => {
+    tbl.items[key];
+    Logger.log(tbl.items[key]);
   });
 }
 
-// function GetTablesInPRFEntries(form_number) {
-//   Tamotsu.initialize();
-//   var Agent;
-//   Agent = Tamotsu.Table.define({
-//     sheetName: "PRF_All_Records",
-//     idColumn: "id",
-//   });
-//   var row = Agent.where({ Form_Number: form_number }).all()[0];
-//   var obj = {};
-//   var tbls = {};
-//   obj.goods_description = JSON.parse(row.goods_description);
-//   obj.works_description = JSON.parse(row.works_description);
-//   obj.packing_description = JSON.parse(row.packing_description);
+function MarkComplete(item, reCreate) {
+  var taskTable = getTableByName("tbl_task", "id");
+  if (item._showDetails) {
+    delete item["_showDetails"];
+  }
+  if (item.id) {
+    item.status = "Completed";
+    taskTable.updateById(item);
+    if (reCreate) {
+      item.status = "Pending";
+      if (item.periodicity_id) {
+        var adder = _getTableByNameWithidColumn("tbl_periodicity", "indexed")[
+          item.periodicity_id
+        ]["value"];
+        adder = JSON.parse(adder);
+        const remindBeforeDays = item.deadline_date - item.reminder_date;
+        const nextDeadlineDate = moment(item.deadline_date).add(adder);
+        item.deadline_date = Number(nextDeadlineDate);
+        item.reminder_date = item.deadline_date - remindBeforeDays;
+      }
+      taskTable.add(item);
+      taskTable.commit();
+    }
+    return item;
+  }
+}
 
-//   var tbl_columns = {};
-//   const array_of_tbl_name = Object.keys(obj);
-//   array_of_tbl_name.forEach((tbl_name) => {
-//     // Logger.log("tbaleName:", tbl_name);
-//     // var columns_array = Object.keys(obj[tbl_name][0]);
-//     var columns_array = [];
+function BulkMarkComplete(taskItems) {
+  taskItems.forEach((item) => {
+    MarkComplete(item, false);
+  });
+}
 
-//     for (var i in obj[tbl_name][0]) {
-//       columns_array.push(i);
-//     }
+function BulkDelete(items, tableName) {
+  var table = getTableByName(tableName, "id");
+  items.forEach((item) => {
+    var deleteItem = table.getItemById(item.id);
+    table.deleteOne(deleteItem);
+  });
+  // table.deleteMany(items);
+  table.commit();
+  return true;
+}
+function BulkDeleteByIds(ids, tableName) {
+  var table = getTableByName(tableName, "id");
+  ids.forEach((id) => {
+    var deleteItem = table.getItemById(id);
+    table.deleteOne(deleteItem);
+  });
+  // table.deleteMany(items);
+  table.commit();
+  return true;
+}
 
-//     // Logger.log(columns_array);
-//     columns_array = columns_array.map((n) => {
-//       var o = {};
-//       o.label = _.startCase(n.toString());
-//       o.field = n;
-//       return o;
-//     });
-//     // Logger.log(columns_array);
+function BulkUpdateByItems(items, tableName) {
+  var table = getTableByName(tableName, "id");
+  table.bulkUpdate(items);
+  table.commit();
+  return true;
+}
 
-//     tbl_columns[tbl_name] = columns_array;
-//   });
+function BulkUpdateByIds(ids, tableName, attributes) {
+  var table = getTableByName(tableName, "id");
+  table.bulkUpdateByIds(ids, attributes);
+  table.commit();
+  return true;
+}
+function sendElksSMS(msg, contacts) {
+  var username = "u3b1b3f9c95936a9811614b27f539abe6";
+  var password = "81FA6D8CF5B4D84D81141AD6934155A1";
 
-//   // Logger.log(tbl_columns);
+  var sender = "+919624701102";
+  var auth = Utilities.base64Encode(username + ":" + password);
 
-//   tbls.data = obj;
-//   tbls.columns = tbl_columns;
+  contacts = contacts.join();
+  try {
+    UrlFetchApp.fetch("https://api.46elks.com/a1/SMS", {
+      method: "post",
+      headers: { Authorization: "Basic " + auth },
+      payload: {
+        from: sender,
+        dryrun: "yes",
+        to: contacts,
+        message: msg,
+      },
+    });
 
-//   return tbls;
-// }
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
 
-// function GetTablesInSRFEntries(form_number) {
-//   Tamotsu.initialize();
-//   var Agent;
-//   Agent = Tamotsu.Table.define({
-//     sheetName: "SRF_All_Records",
-//     idColumn: "id",
-//   });
-//   var row = Agent.where({ Form_Number: form_number }).all()[0];
-//   // Logger.log(row);
-//   var obj = {};
-//   var tbls = {};
-//   obj.Slitting_Details = JSON.parse(row.Slitting_Details);
-//   obj.Packing_Details = JSON.parse(row.Packing_Details);
-//   var tbl_columns = {};
-//   const array_of_tbl_name = Object.keys(obj);
-//   array_of_tbl_name.forEach((tbl_name) => {
-//     // Logger.log("tbaleName:", tbl_name);
-//     // var columns_array = Object.keys(obj[tbl_name][0]);
-//     var columns_array = [];
+function saveInvoice(pdfBlob, invoiceTableName, invoicePayload) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var SSID = ss.getId();
+  var fileInDrive = DriveApp.getFolderById(SSID);
+  var parent_id = fileInDrive.getParents().next().getId();
+  var par_fdr = DriveApp.getFolderById(parent_id); // replace the ID
+  var fdr_name = "Client Invoices";
+  try {
+    var newFdr = par_fdr.getFoldersByName(fdr_name).next();
+  } catch (e) {
+    var newFdr = par_fdr.createFolder(fdr_name);
+  }
 
-//     for (var i in obj[tbl_name][0]) {
-//       columns_array.push(i);
-//     }
+  try {
+    var blob = Utilities.newBlob(
+      Utilities.base64Decode(pdfBlob.data),
+      pdfBlob.mimeType,
+      pdfBlob.fileName
+    );
+    var file = newFdr.createFile(blob);
+    // Move to some folder if folder ID is given
+    // var fileId = file.getUrl();
+    // var fileUrl = "https://drive.google.com/file/d/" + file.getUrl();
+    invoicePayload.invoice = file.getUrl();
+    createEntity(invoicePayload, invoiceTableName);
+    return file.getUrl();
+  } catch (e) {
+    return e.message;
+  }
+}
 
-//     // Logger.log(columns_array);
-//     columns_array = columns_array.map((n) => {
-//       var o = {};
-//       o.label = _.startCase(n.toString());
-//       o.field = n;
-//       return o;
-//     });
-//     // Logger.log(columns_array);
+function sendPdfByEmail(
+  pdfBlob,
+  recepient = "pritamiitian@gmail.com",
+  payload,
+  payloadForInvoiceRecord
+) {
+  const { clientName, invoiceNumber, invoiceDate } = payload;
 
-//     tbl_columns[tbl_name] = columns_array;
-//   });
+  try {
+    var blob = Utilities.newBlob(
+      Utilities.base64Decode(pdfBlob.data),
+      pdfBlob.mimeType,
+      pdfBlob.fileName
+    );
+    var file = DriveApp.createFile(blob);
+    // Move to some folder if folder ID is given
+    var fileId = file.getUrl();
+    var fileUrl = "https://drive.google.com/file/d/" + fileId;
+    var email = recepient;
+    var subject = "Invoice " + invoiceNumber + " dated " + invoiceDate;
 
-//   // Logger.log(tbl_columns);
+    payloadForInvoiceRecord.invoice = fileUrl;
 
-//   tbls.data = obj;
-//   tbls.columns = tbl_columns;
+    var htmlbody = `
+    <html>
+  <body>
+   
+    <p>Dear #clientName#,</p>
+    <p>I hope this email finds you well. I am writing to follow up on your recent purchase. Attached to this email, you will find an invoice for the items and services outlined in the purchase order.</p>
+ 
+    <p>Please review the invoice carefully and let us know if there are any discrepancies or issues. We would like to ensure that the invoice is accurate and that payment can be processed as soon as possible.</p>
+    <p>Please let us know if you have any questions or concerns. We appreciate your prompt attention to this matter and look forward to continuing our business relationship with you.</p>
+    <p>Thank you for your business,</p>
+    <p>[Your Name]</p>
+    <p>P.S: The invoice is attached to this email as a pdf file.</p>
+  </body>
+</html>
+`;
 
-//   return tbls;
-// }
+    ["clientName"].forEach((key) => {
+      htmlbody = htmlbody.replace("#" + key + "#", payload[key]);
+    });
 
-// function sendMailPRF(form_id, mailIds, listName) {
-//   var message = "Please update further";
-//   Tamotsu.initialize();
-//   var Agent;
-//   Agent = Tamotsu.Table.define({ sheetName: listName, idColumn: "id" });
+    const id = MailApp.sendEmail(email, subject, "", {
+      attachments: [file.getAs(MimeType.PDF)],
+      htmlBody: htmlbody,
+    });
+    // var sentThreads = GmailApp.search("from:me to:" + recepient);
+    // var threadId = sentThreads[0].getId();
 
-//   try {
-//     var body = JSON.stringify(
-//       Agent.where({
-//         Form_Number: Number(form_id),
-//       }).all()[0],
-//       null,
-//       4
-//     );
+    createEntity(paylodForInvoiceRecord, "tbl_custom_invoice");
 
-//     message += "<pre>" + body + "</pre><br>";
+    return { fileUrl };
+    // file.setTrashed(true);
+  } catch (e) {
+    return e.message;
+  }
+}
+function sendInvoiceByEmail(payload) {
+  const {
+    clientName,
+    invoiceId,
+    invoiceTableName,
+    invoiceNumber,
+    invoiceDate,
+    clientEmail,
+    invoiceUrl,
+  } = payload;
+  var fileId = invoiceUrl.match(/[-\w]{25,}/);
+  var file = DriveApp.getFileById(fileId);
 
-//     Logger.log(message);
-//     GmailApp.sendEmail(
-//       // mailIds[1],
-//       "sharma.pritam311@gmail.com",
-//       "Please Update Further ",
-//       message,
-//       {
-//         htmlBody: message,
-//         cc: mailIds.join(),
-//       }
-//     );
+  try {
+    var email = clientEmail || "pritamiitian@gmail.com";
+    var subject = "Invoice " + invoiceNumber + " dated " + invoiceDate;
 
-//     return true;
-//   } catch (error) {
-//     return false;
-//   }
-// }
+    var htmlbody = `
+    <html>
+  <body>
+   
+    <p>Dear #clientName#,</p>
+    <p>I hope this email finds you well. I am writing to follow up on your recent purchase. Attached to this email, you will find an invoice for the items and services outlined in the purchase order.</p>
+ 
+    <p>Please review the invoice carefully and let us know if there are any discrepancies or issues. We would like to ensure that the invoice is accurate and that payment can be processed as soon as possible.</p>
+    <p>Please let us know if you have any questions or concerns. We appreciate your prompt attention to this matter and look forward to continuing our business relationship with you.</p>
+    <p>Thank you for your business,</p>
+    <p>[Your Name]</p>
+    <p>P.S: The invoice is attached to this email as a pdf file.</p>
+  </body>
+</html>
+`;
 
-// function sendMail2(obj) {
-//   var message = "PRF/SRF detail as entered :";
-//   // var mailIds = ["sharma.pritam311@gmail.com", "notifications.borl@gmail.com", "jamesfd4cast@gmail.com", "james@fd4cast.com", "hempel.metals.data@gmail.com"];
-//   var mailIds = ["sharma.pritam311@gmail.com", "notifications.borl@gmail.com"];
+    ["clientName"].forEach((key) => {
+      htmlbody = htmlbody.replace("#" + key + "#", clientName);
+    });
 
-//   for (var k in obj) {
-//     message += "<p><b>" + _.startCase(k) + " : " + "</b>" + obj[k] + "</p>";
-//   }
-//   Logger.log(message);
+    const id = MailApp.sendEmail(email, subject, "", {
+      attachments: [file.getAs(MimeType.PDF)],
+      htmlBody: htmlbody,
+    });
 
-//   try {
-//     GmailApp.sendEmail(
-//       mailIds[1],
+    // Update the invoice record with the email sent status
 
-//       message,
-//       {
-//         htmlBody: message,
-//         cc: mailIds.join(),
-//       }
-//     );
-//     return true;
-//   } catch (error) {
-//     return false;
-//   }
-// }
+    BulkUpdateByIds([invoiceId], invoiceTableName, { invoice_sent: true });
+
+    return true;
+  } catch (e) {
+    return e.message;
+  }
+}

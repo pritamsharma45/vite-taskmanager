@@ -1,0 +1,360 @@
+@import "../node_modules/bootstrap/scss/bootstrap";
+@import "node_modules/bootstrap-vue/src/index.scss";
+@import "./prod.scss";
+@import "./old.scss";
+
+body {
+  background-color: #ffffff !important;
+}
+
+#app {
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #ffffff;
+}
+/* Background Styles go here */
+.gradient-lightpink {
+  background: linear-gradient(to bottom right, #f9e2a7 0%, #f9e2a7 100%);
+  font-size: 13px;
+}
+/* Styles go here */
+
+.invoice-footer {
+  position: absolute;
+  float: center;
+  bottom: 10px;
+}
+// .example {
+//   color: red;
+// }
+
+.page-header,
+.page-header-space {
+  height: 100px;
+}
+
+.page-footer,
+.page-footer-space {
+  height: 50px;
+}
+
+.page-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  border-top: 1px solid black; /* for demo */
+  background: yellow; /* for demo */
+}
+
+.page-header {
+  position: fixed;
+  top: 0mm;
+  width: 100%;
+  border-bottom: 1px solid black; /* for demo */
+  background: yellow; /* for demo */
+}
+
+.page {
+  page-break-after: always;
+}
+
+@page {
+  margin: 20mm;
+}
+
+@media print {
+  thead {
+    display: table-header-group;
+  }
+  tfoot {
+    display: table-footer-group;
+  }
+
+  button {
+    display: none;
+  }
+
+  body {
+    margin: 0;
+  }
+}
+
+.navbar {
+  // background-color: #477680 !important; // sets background to black
+  color: #031bec;
+  background: hsl(204, 97%, 59%) !important;
+  padding: 5px 16px;
+  border-radius: 0;
+  border: none;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .navbar-brand,
+.navbar .navbar-text {
+  color: rgb(252, 255, 56);
+}
+
+.navbar .navbar-nav .nav-link {
+  color: rgb(220, 228, 247);
+}
+.navbar .nav-item.active .nav-link,
+.navbar .nav-item:hover .nav-link {
+  color: rgb(242, 244, 248);
+}
+.hamburger {
+  font-size: 20px;
+  color: #fff;
+}
+
+.vue-form-generator > div {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  flex-grow: 1;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 2%;
+  width: 100%;
+}
+
+.field-wrap,
+.wrapper {
+  width: 100%;
+}
+
+.dropList {
+  z-index: 10;
+  background-color: #fff;
+  position: relative;
+  width: 40%;
+  top: 5px;
+  right: 12px;
+}
+
+legend {
+  margin: 10px 0 20px 18px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.hint {
+  font-size: 10px;
+  font-style: italic;
+  color: purple;
+}
+
+.help-block {
+  color: red;
+}
+
+/* Main Footer */
+footer .main-footer {
+  padding: 20px 0;
+  background: #252525;
+}
+footer ul {
+  padding-left: 0;
+  list-style: none;
+}
+
+/* Copy Right Footer */
+.footer-copyright {
+  background: #222;
+  padding: 5px 0;
+}
+.footer-copyright .logo {
+  display: inherit;
+}
+.footer-copyright nav {
+  float: right;
+  margin-top: 5px;
+}
+.footer-copyright nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.footer-copyright nav ul li {
+  border-left: 1px solid #505050;
+  display: inline-block;
+  line-height: 12px;
+  margin: 0;
+  padding: 0 8px;
+}
+.footer-copyright nav ul li a {
+  color: #969696;
+}
+.footer-copyright nav ul li:first-child {
+  border: medium none;
+  padding-left: 0;
+}
+.footer-copyright p {
+  color: #969696;
+  margin: 2px 0 0;
+}
+
+/* Footer Top */
+.footer-top {
+  background: #252525;
+  padding-bottom: 30px;
+  margin-bottom: 30px;
+  border-bottom: 3px solid #222;
+}
+
+/* Footer transparent */
+footer.transparent .footer-top,
+footer.transparent .main-footer {
+  background: transparent;
+}
+footer.transparent .footer-copyright {
+  background: none repeat scroll 0 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Footer light */
+footer.light .footer-top {
+  background: #f9f9f9;
+}
+footer.light .main-footer {
+  background: #f9f9f9;
+}
+footer.light .footer-copyright {
+  background: none repeat scroll 0 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Footer 4 */
+.footer- .logo {
+  display: inline-block;
+}
+
+// .navbar {
+// 	color: #fff;
+// 	background: #926dde !important;
+// 	padding: 5px 16px;
+// 	border-radius: 0;
+// 	border: none;
+// 	box-shadow: 0 0 4px rgba(0,0,0,.1);
+// }
+// .navbar img {
+// 	border-radius: 50%;
+// 	width: 36px;
+// 	height: 36px;
+// 	margin-right: 10px;
+// }
+// .navbar .navbar-brand {
+// 	color: #efe5ff;
+// 	padding-left: 0;
+// 	padding-right: 50px;
+// 	font-size: 24px;
+// }
+// .navbar .navbar-brand:hover, .navbar .navbar-brand:focus {
+// 	color: #fff;
+// }
+// .navbar .navbar-brand i {
+// 	font-size: 25px;
+// 	margin-right: 5px;
+// }
+
+// .navbar .nav-item i {
+// 	font-size: 18px;
+// }
+// .navbar .nav-item span {
+// 	position: relative;
+// 	top: 3px;
+// }
+// .navbar .navbar-nav > a {
+// 	color: #efe5ff;
+// 	padding: 8px 15px;
+// 	font-size: 14px;
+// }
+// .navbar .navbar-nav > a:hover, .navbar .navbar-nav > a:focus {
+// 	color: #fff;
+// 	text-shadow: 0 0 4px rgba(255,255,255,0.3);
+// }
+// .navbar .navbar-nav > a > i {
+// 	display: block;
+// 	text-align: center;
+// }
+// .navbar .dropdown-item i {
+// 	font-size: 16px;
+// 	min-width: 22px;
+// }
+// .navbar .dropdown-item .material-icons {
+// 	font-size: 21px;
+// 	line-height: 16px;
+// 	vertical-align: middle;
+// 	margin-top: -2px;
+// }
+// .navbar .nav-item.open > a, .navbar .nav-item.open > a:hover, .navbar .nav-item.open > a:focus {
+// 	color: #fff;
+// 	background: none !important;
+// }
+// .navbar .dropdown-menu {
+// 	border-radius: 1px;
+// 	border-color: #e5e5e5;
+// 	box-shadow: 0 2px 8px rgba(0,0,0,.05);
+// }
+// .navbar .dropdown-menu a {
+// 	color: #777 !important;
+// 	padding: 8px 20px;
+// 	line-height: normal;
+// 	font-size: 15px;
+// }
+// .navbar .dropdown-menu a:hover, .navbar .dropdown-menu a:focus {
+// 	color: #333 !important;
+// 	background: transparent !important;
+// }
+// .navbar .navbar-nav .active a, .navbar .navbar-nav .active a:hover, .navbar .navbar-nav .active a:focus {
+// 	color: #fff;
+// 	text-shadow: 0 0 4px rgba(255,255,255,0.2);
+// 	background: transparent !important;
+// }
+// .navbar .navbar-nav .user-action {
+// 	padding: 9px 15px;
+// 	font-size: 15px;
+// }
+// .navbar .navbar-toggle {
+// 	border-color: #fff;
+// }
+// .navbar .navbar-toggle .icon-bar {
+// 	background: #fff;
+// }
+// .navbar .navbar-toggle:focus, .navbar .navbar-toggle:hover {
+// 	background: transparent;
+// }
+// .navbar .navbar-nav .open .dropdown-menu {
+// 	background: #faf7fd;
+// 	border-radius: 1px;
+// 	border-color: #faf7fd;
+// 	box-shadow: 0 2px 8px rgba(0,0,0,.05);
+// }
+// .navbar .divider {
+// 	background-color: #e9ecef !important;
+// }
+// @media (max-width: 1199px){
+// 	.navbar .navbar-nav > a > i {
+// 		display: inline-block;
+// 		text-align: left;
+// 		min-width: 30px;
+// 		position: relative;
+// 		top: 4px;
+// 	}
+// 	.navbar .navbar-collapse {
+// 		border: none;
+// 		box-shadow: none;
+// 		padding: 0;
+// 	}
+
+// 	.navbar .navbar-nav {
+// 		margin: 8px 0;
+// 	}
+// 	.navbar .navbar-toggle {
+// 		margin-right: 0;
+// 	}
+// }

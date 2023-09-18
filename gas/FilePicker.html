@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://unpkg.com/buefy/dist/buefy.min.css">
+  <script src="https://unpkg.com/vue"></script>
+  <!-- Full bundle -->
+  <script src="https://unpkg.com/buefy/dist/buefy.min.js"></script>
+  <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@5.8.55/css/materialdesignicons.min.css">
+</head>
+
+<body>
+  <div id="app">
+    <!-- Buefy components goes here -->
+    <template>
+
+      <div class="content mr-2 px-2">
+        <h1 class="has-text-primary">Task Manager</h1>
+        <p>The excel file you will be uploading should contain only one sheet containing data.
+          The header should match exactly like this :-id, client_name, email,phone, address_1, address_2, city,
+          country, postcode, company_type_id</p>
+        <b-field class="file is-primary" :class="{'has-name': !!file}">
+          <b-upload v-model="file" class="file-label" @input="fileHandler">
+            <span class="file-cta">
+                        <b-icon class="file-icon" icon="upload"></b-icon>
+                        <span class="file-label">Upload customers data</span>
+            </span>
+            <!-- <span class="file-name" v-if="file">
+                        {{ file.name }}
+                    </span> -->
+          </b-upload>
+        </b-field>
+        <br>
+        <!-- <div>{{jsonData}}</div> -->
+        <strong>{{msg}}</strong>
+      </div>
+
+    </template>
+  </div>
+
+
+
+  <script>
+    new Vue({
+            el: '#app',
+             data() {
+            return {
+              file: null,
+                data: [],
+                jsonData:[],
+                columns:[],
+                msg:""
+            }
+        },
+        
+          methods: {
+
+    fileHandler(event){
+      console.log("File Input Done",event) ;
+      this.file = event ;
+      if (this.file) {
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+          /* Parse data */
+          const bstr = e.target.result;
+          const wb = XLSX.read(bstr, { type: 'binary' });
+          /* Get first worksheet */
+          const wsname = wb.SheetNames[0];
+          const ws = wb.Sheets[wsname];
+          /* Convert array of arrays */
+          const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+          console.log(data);
+          this.columns = data[0];
+          this.jsonData =  this.arrayToJSON(data);
+          
+            google.script.run.withSuccessHandler((res)=>{
+               this.$buefy.toast.open(res);
+               this.msg = "File uploaded successfully." ; 
+        console.log("Tranfer in progress",res);
+      }).transferData(data);
+
+
+        }
+
+        reader.readAsBinaryString(this.file);
+      }
+
+    },
+         arrayToJSON(array2D) {
+  const header = array2D[0];
+  const body = array2D.slice(1);
+  const arr2 = body.map(el => {
+    let obj = {};
+    for (let i = 0; i < el.length; ++i) {
+      obj[header[i]] = el[i];
+    }
+    return obj;
+  })
+  return arr2;
+}
+    
+    },
+
+  
+    })
+       
+  </script>
+</body>
+
+</html>
